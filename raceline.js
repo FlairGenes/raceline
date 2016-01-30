@@ -197,8 +197,24 @@ window.addEventListener("load",function() {
             p.points.shift();
        },
        
+      });  
+         
+      Q.Sprite.extend("Wall", {
+        init: function(p) {
+          this._super(p, {
+            type: Q.SPRITE_WALL,
+            collisionMask: Q.SPRITE_SHIP,
+            skipCollide: true,
+            sheet: 'wall',
+          });
+          this.add("2d");
+        }
       });
-      
+      // Return a x and y location from a row and column
+      // in our tile map
+      Q.tilePos = function(col,row, tile) {
+        return { x: col*32, y: row*32, frame: tile };
+      }
       Q.TileLayer.extend("TrackOne",{
         init: function() {
           this._super({
@@ -218,9 +234,9 @@ window.addEventListener("load",function() {
             for(var x =0;x<row.length;x++) {
               var tile = row[x];
 
-              if(tile == 0 || tile == 2) {
-                var className = 'Wall';
-                this.stage.insert(new Q[className](Q.tilePos(x,y)));
+              //set the walls
+              if(tile >= 5) {
+                this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
                 row[x] = 0;
               }
             }
