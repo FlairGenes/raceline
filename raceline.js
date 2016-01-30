@@ -13,7 +13,7 @@ window.addEventListener("load",function() {
 
       Q.SPRITE_SHIP = 1;
       Q.SPRITE_WALL = 2;
-      Q.TILESIZE = 64;
+      Q.TILESIZE = Q.width / 20;
       Q.SPRITE_LINE = 4;
       var line;
       var player;
