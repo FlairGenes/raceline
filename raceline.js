@@ -142,13 +142,6 @@ window.addEventListener("load",function() {
         init: function(p) {
           p = this.createShape(p);
 
-          if(!p.vx) {
-            p.startAngle = p.startAngle || Math.random()*360;
-            var speed = Math.random()*100 + 50;
-            p.vx = Math.cos(p.startAngle)*speed;
-            p.vy = Math.sin(p.startAngle)*speed;
-          }
-
           this._super(p, {
             type: Q.SPRITE_ASTEROID,
             collisionMask: Q.SPRITE_SHIP,
