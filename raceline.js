@@ -132,8 +132,8 @@ window.addEventListener("load",function() {
             var thrustX = Math.sin(p.angle * Math.PI / 180),
                 thrustY = -Math.cos(p.angle * Math.PI / 180);
 
-            p.vx += thrustX ;
-            p.vy += thrustY ;            
+            //p.vx += thrustX ;
+            //p.vy += thrustY ;            
             p.vx = p.vx * (1 - p.resistance);
             p.vy = p.vy * (1 - p.resistance);    
         },
@@ -199,123 +199,33 @@ window.addEventListener("load",function() {
        
       });
       
-      Q.VectorSprite.extend("Wall", {
-        init: function(p) {
-          p = this.createShape(p);
-
-          this._super(p, {
+      Q.TileLayer.extend("TrackOne",{
+        init: function() {
+          this._super({
             type: Q.SPRITE_WALL,
-            collisionMask: Q.SPRITE_SHIP,
-            omega: Math.random() * 100,
-            skipCollide: true,
-            points: []
+            dataAsset: 'track.json',
+            sheet:     'tiles',
           });
-          this.add("2d");
 
-          //this.on("hit.sprite",this,"collision");
         },
+        
+        setup: function() {
+          // Clone the top level arriw
+          var tiles = this.p.tiles = this.p.tiles.concat();
+          var size = this.p.tileW;
+          for(var y=0;y<tiles.length;y++) {
+            var row = tiles[y] = tiles[y].concat();
+            for(var x =0;x<row.length;x++) {
+              var tile = row[x];
 
-        createShape: function(p) {
-          p = p || {};
-
-          p.points = [];
-          
-          var m = Q.TILESIZE;
-          var w = Q.TILESIZE / 2;
-          if(p.wall === "leftwall") {
-              //top left
-              p.points.push([w,0]);
-              //top right
-              p.points.push([m,0]);
-              //bottom right
-              p.points.push([m,m]);
-              //bottom left
-              p.points.push([w,m]);
-              p.assets
-               
+              if(tile == 0 || tile == 2) {
+                var className = 'Wall';
+                this.stage.insert(new Q[className](Q.tilePos(x,y)));
+                row[x] = 0;
+              }
+            }
           }
-          if(p.wall === "rightwall") {
-              //top left
-              p.points.push([0,0]);
-              //top right
-              p.points.push([w,0]);
-              //bottom right
-              p.points.push([w,m]);
-              //bottom left
-              p.points.push([0,m]);
-          }
-          if(p.wall === "topwall") {
-              //top left
-              p.points.push([0,w]);
-              //top right
-              p.points.push([m,w]);
-              //bottom right
-              p.points.push([m,m]);
-              //bottom left
-              p.points.push([0,m]);
-          }
-          if(p.wall === "bottomwall") {
-              //top left
-              p.points.push([0,0]);
-              //top right
-              p.points.push([m,0]);
-              //bottom right
-              p.points.push([m,w]);
-              //bottom left
-              p.points.push([0,w]);
-          }
-          if(p.wall === "topleftcorner") {
-              //top left
-              p.points.push([w,w]);
-              //top right
-              p.points.push([m,w]);
-              //bottom right
-              p.points.push([m,m]);
-              //bottom left
-              p.points.push([w,m]);
-          }
-          if(p.wall === "toprightcorner") {
-              //top left
-              p.points.push([0,w]);
-              //top right
-              p.points.push([w,w]);
-              //bottom right
-              p.points.push([w,m]);
-              //bottom left
-              p.points.push([0,m]);
-          }
-          if(p.wall === "bottomleftcorner") {
-              //top left
-              p.points.push([w,0]);
-              //top right
-              p.points.push([m,0]);
-              //bottom right
-              p.points.push([m,w]);
-              //bottom left
-              p.points.push([w,w]);
-          }
-          if(p.wall === "bottomrightcorner") {
-              //top left
-              p.points.push([0,0]);
-              //top right
-              p.points.push([w,0]);
-              //bottom right
-              p.points.push([w,w]);
-              //bottom left
-              p.points.push([0,w]);
-          }
-          
-          
-          p.cx = 0;
-          p.cy = 0;   
-          p.w = Q.TILESIZE;
-          p.h = Q.TILESIZE;
-          p.x = p.x * Q.TILESIZE;
-          p.y = p.y * Q.TILESIZE;
-
-          p.angle = 0;
-         return p;
-       },
+        }
 
       });
       
@@ -323,92 +233,11 @@ window.addEventListener("load",function() {
 
 
       Q.scene("level1",function(stage) {
-        
+         var map = stage.collisionLayer(new Q.TrackOne());
+         map.setup();
         line = stage.insert(new Q.Line({point:{x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}}));
         player = stage.insert(new Q.Ship({ x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}));
         
-            
-            //outside
-            stage.insert(new Q.Wall({ x: 1, y: 0, wall:"topleftcorner" }));
-            stage.insert(new Q.Wall({ x: 1, y: 1, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 2, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 3, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 4, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 5, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 6, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 7, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 8, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 9, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 1, y: 10, wall:"bottomleftcorner" }));
-            
-            stage.insert(new Q.Wall({ x: 2, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 4, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 5, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 6, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 7, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 9, y: 0, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 10, y: 0, wall:"topwall" }));
-            
-            stage.insert(new Q.Wall({ x: 11, y: 0, wall:"toprightcorner" }));
-            stage.insert(new Q.Wall({ x: 11, y: 1, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 2, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 3, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 4, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 5, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 6, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 7, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 8, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 9, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 11, y: 10, wall:"bottomrightcorner" }));
-            
-            stage.insert(new Q.Wall({ x: 2, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 4, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 5, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 6, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 7, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 9, y: 10, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 10, y: 10, wall:"bottomwall" }));
-
-            //inside
-            
-            stage.insert(new Q.Wall({ x: 3, y: 2, wall:"topleftcorner" }));
-            stage.insert(new Q.Wall({ x: 3, y: 3, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 4, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 5, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 6, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 7, wall:"leftwall" }));
-            stage.insert(new Q.Wall({ x: 3, y: 8, wall:"bottomleftcorner" }));
-            
-            
-            stage.insert(new Q.Wall({ x: 4, y: 2, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 5, y: 2, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 6, y: 2, wall:"topwall" }));
-            stage.insert(new Q.Wall({ x: 7, y: 2, wall:"topwall" }));
-            //stage.insert(new Q.Wall({ x: 8, y: 2, wall:"topwall" }));
-
-            stage.insert(new Q.Wall({ x: 8, y: 2, wall:"toprightcorner" }));
-            stage.insert(new Q.Wall({ x: 8, y: 3, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 4, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 5, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 6, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 7, wall:"rightwall" }));
-            stage.insert(new Q.Wall({ x: 8, y: 8, wall:"bottomrightcorner" }));     
-            
-            
-            stage.insert(new Q.Wall({ x: 4, y: 8, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 5, y: 8, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 6, y: 8, wall:"bottomwall" }));
-            stage.insert(new Q.Wall({ x: 7, y: 8, wall:"bottomwall" }));
-           // stage.insert(new Q.Wall({ x: 8, y: 8, wall:"bottomwall" }));
-            
-            
-            
-            
-            //col two
         stage.on("step",function() {
 
         });
@@ -437,8 +266,8 @@ window.addEventListener("load",function() {
       
 
 // Make sure penguin.png is loaded
-Q.load("CarPos1.png",function() {
-
+Q.load("CarPos1.png, track.json, tiles.png",function() {
+    Q.sheet("tiles","tiles.png", { tileW: 32, tileH: 32 });
     Q.stageScene("level1");
    
  });
