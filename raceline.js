@@ -269,17 +269,9 @@ window.addEventListener("load",function() {
             for(var x =0;x<row.length;x++) {
               var tile = row[x];
 
-<<<<<<< HEAD
               if(tile == 0 ) {
                 row[x] = 0;
               }
-=======
-            //   //set the walls
-            //   if(tile != 4) {
-            //     this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
-            //     row[x] = 0;
-            //   }
->>>>>>> 9bc6cd3528ecfec78fb528a2139df6a047e3d073
             }
           }
         }
@@ -319,18 +311,13 @@ window.addEventListener("load",function() {
           container.fit(20);
         });
 
-<<<<<<< HEAD
       
 
 // Make sure penguin.png is loaded
-Q.load("CarPos1.png, track.json, trackwall.json, spritesheet_track.png, spritesheet_wall.png",function() {
+Q.load("CarPos1.png, track.json, trackwall.json, spritesheet_track.png, spritesheet_wall.png, forward-single-2.mp3",function() {
     Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
     Q.sheet("spritesheet_track","spritesheet_track.png", { tileW: 32, tileH: 32 });
-=======
-Q.load(
-    "CarPos1.png, track.json, tiles.png, forward-single-2.mp3", function() {
     Q.sheet("tiles","tiles.png", { tileW: 32, tileH: 32 });
->>>>>>> 9bc6cd3528ecfec78fb528a2139df6a047e3d073
     Q.stageScene("level1");
    
  });
