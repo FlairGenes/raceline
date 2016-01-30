@@ -12,7 +12,11 @@ window.addEventListener("load",function() {
       Q.gravityY = 0;
 
       Q.SPRITE_SHIP = 1;
-      Q.SPRITE_ASTEROID = 2;
+      Q.SPRITE_WALL = 2;
+      Q.TILESIZE = 64;
+      Q.SPRITE_LINE = 4;
+      var line;
+      var player;
 
       Q.component("reposition", {
 
@@ -54,7 +58,7 @@ window.addEventListener("load",function() {
         init: function(p) {
           this._super(p, {
             type: Q.SPRITE_NONE,
-            collisionMask: Q.SPRITE_ASTEROID,
+            collisionMask: Q.SPRITE_WALL,
             w: 10,
             h: 20,
             omega: 0,
@@ -75,9 +79,10 @@ window.addEventListener("load",function() {
         },
 
         checkActivation: function() {
-          if(!this.stage.search(this.activationObject, Q.SPRITE_ASTEROID)) {
+          if(!this.stage.search(this.activationObject, Q.SPRITE_WALL)) {
             this.p.activated = true;
           }
+
         },
 
         step: function(dt) {
@@ -116,7 +121,12 @@ window.addEventListener("load",function() {
             p.vy += thrustY ;            
             p.vx = p.vx * (1 - p.resistance);
             p.vy = p.vy * (1 - p.resistance);    
-               
+            if(line.points){
+                line.points.push([p.x - 1, p.point.y - 1 ]);
+                line.points.push([p.x + 1, p.y - 1 ]);
+                line.points.push([p.x + 1, p.y + 1 ]);
+                line.points.push([px - 1, p.y + 1 ]);
+            }
         },
 
         draw: function(ctx) {
@@ -137,89 +147,262 @@ window.addEventListener("load",function() {
         }
       });
       
-      Q.VectorSprite.extend("Asteroid", {
+      
+      //Line
+      Q.VectorSprite.extend("Line", {
+        init: function(p) {
+          p = this.createShape(p);
+          
+          this._super(p, {
+            type: Q.SPRITE_LINE,
+            collisionMask: Q.SPRITE_SHIP,
+            omega: Math.random() * 100,
+            skipCollide: true,
+            points: []
+          });
+          this.add("2d");
 
+          //this.on("hit.sprite",this,"collision");
+        },
+
+        createShape: function(p) {
+          p = p || {};
+
+          p.points = [];
+          p.points.push([p.point.x - 1, p.point.y - 1 ]);
+          p.points.push([p.point.x + 1, p.point.y - 1 ]);
+          p.points.push([p.point.x + 1, p.point.y + 1 ]);
+          p.points.push([p.point.x - 1, p.point.y + 1 ]);
+          
+          p.cx = 0;
+          p.cy = 0;   
+          p.w = Q.width;
+          p.h = Q.height;
+          p.x = 0;
+          p.y = 0;
+
+          p.angle = 0;
+         return p;
+       },
+       step: function(){
+          var p = this.p;
+
+          p.points.push([player.p.x - 1, player.p.y - 1 ]);
+          p.points.push([player.p.x + 1, player.p.y - 1 ]);
+          p.points.push([player.p.x  + 1, player.p.y + 1 ]);
+          p.points.push([player.p.x  - 1, player.p.y + 1 ]);
+       }
+      });
+      
+      Q.VectorSprite.extend("Wall", {
         init: function(p) {
           p = this.createShape(p);
 
           this._super(p, {
-            type: Q.SPRITE_ASTEROID,
+            type: Q.SPRITE_WALL,
             collisionMask: Q.SPRITE_SHIP,
             omega: Math.random() * 100,
-            skipCollide: true
+            skipCollide: true,
+            points: []
           });
-          this.add("2d, reposition");
+          this.add("2d");
 
-          this.on("hit.sprite",this,"collision");
-        },
-
-        collision: function(col) {
-          if(col.obj.isA("Ship")) {
-           // col.obj.reset(); 
-          }
-        },
-
-        step: function(dt) {
-          this.p.angle += this.p.omega * dt;
+          //this.on("hit.sprite",this,"collision");
         },
 
         createShape: function(p) {
-          var angle = Math.random()*2*Math.PI,
-              numPoints = 7 + Math.floor(Math.random()*5),
-              minX = 0, maxX = 0,
-              minY = 0, maxY = 0,
-              curX, curY;
-
           p = p || {};
 
           p.points = [];
-
-          var startAmount = p.size;
-
-          for(var i = 0;i < numPoints;i++) {
-            curX = Math.floor(Math.cos(angle)*startAmount);
-            curY = Math.floor(Math.sin(angle)*startAmount);
-
-            if(curX < minX) minX = curX;
-            if(curX > maxX) maxX = curX;
-
-            if(curY < minY) minY = curY;
-            if(curY > maxY) maxY = curY;
-
-            p.points.push([curX,curY]);
-
-            startAmount += Math.floor(Math.random()*3);
-            angle += (Math.PI * 2) / (numPoints+1);
-          };
-
-          maxX += 30;
-          minX -= 30;
-          maxY += 30;
-          minY -= 30;
-
-          p.w = maxX - minX;
-          p.h = maxY - minY;
-
-          for(var i = 0;i < numPoints;i++) {
-            p.points[i][0] -= minX + p.w/2;
-            p.points[i][1] -= minY + p.h/2;
+          
+          var m = Q.TILESIZE;
+          var w = Q.TILESIZE / 2;
+          if(p.wall === "leftwall") {
+              //top left
+              p.points.push([w,0]);
+              //top right
+              p.points.push([m,0]);
+              //bottom right
+              p.points.push([m,m]);
+              //bottom left
+              p.points.push([w,m]);
+               
           }
+          if(p.wall === "rightwall") {
+              //top left
+              p.points.push([0,0]);
+              //top right
+              p.points.push([w,0]);
+              //bottom right
+              p.points.push([w,m]);
+              //bottom left
+              p.points.push([0,m]);
+          }
+          if(p.wall === "topwall") {
+              //top left
+              p.points.push([0,w]);
+              //top right
+              p.points.push([m,w]);
+              //bottom right
+              p.points.push([m,m]);
+              //bottom left
+              p.points.push([0,m]);
+          }
+          if(p.wall === "bottomwall") {
+              //top left
+              p.points.push([0,0]);
+              //top right
+              p.points.push([m,0]);
+              //bottom right
+              p.points.push([m,w]);
+              //bottom left
+              p.points.push([0,w]);
+          }
+          if(p.wall === "topleftcorner") {
+              //top left
+              p.points.push([w,w]);
+              //top right
+              p.points.push([m,w]);
+              //bottom right
+              p.points.push([m,m]);
+              //bottom left
+              p.points.push([w,m]);
+          }
+          if(p.wall === "toprightcorner") {
+              //top left
+              p.points.push([0,w]);
+              //top right
+              p.points.push([w,w]);
+              //bottom right
+              p.points.push([w,m]);
+              //bottom left
+              p.points.push([0,m]);
+          }
+          if(p.wall === "bottomleftcorner") {
+              //top left
+              p.points.push([w,0]);
+              //top right
+              p.points.push([m,0]);
+              //bottom right
+              p.points.push([m,w]);
+              //bottom left
+              p.points.push([w,w]);
+          }
+          if(p.wall === "bottomrightcorner") {
+              //top left
+              p.points.push([0,0]);
+              //top right
+              p.points.push([w,0]);
+              //bottom right
+              p.points.push([w,w]);
+              //bottom left
+              p.points.push([0,w]);
+          }
+          
+          
+          p.cx = 0;
+          p.cy = 0;   
+          p.w = Q.TILESIZE;
+          p.h = Q.TILESIZE;
+          p.x = p.x * Q.TILESIZE;
+          p.y = p.y * Q.TILESIZE;
 
-
-          p.x = p.x || Math.random()*Q.width;
-          p.y = p.y || Math.random()*Q.height;
-          p.cx = p.w/2;
-          p.cy = p.h/2;
-          p.angle = angle;
+          p.angle = 0;
          return p;
        },
+
       });
+      
+
 
 
       Q.scene("level1",function(stage) {
-        var player = stage.insert(new Q.Ship({ x: Q.width/2, y: Q.height/2}));
-            stage.insert(new Q.Asteroid({ size: 60 }));
+        
+        
+        player = stage.insert(new Q.Ship({ x: Q.width/2, y: Q.height/2}));
+        line = stage.insert(new Q.Line({point:{x:Q.width/2, y: Q.height/2}}));
+            /*
+            //outside
+            stage.insert(new Q.Wall({ x: 1, y: 0, wall:"topleftcorner" }));
+            stage.insert(new Q.Wall({ x: 1, y: 1, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 2, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 3, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 4, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 5, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 6, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 7, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 8, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 9, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 1, y: 10, wall:"bottomleftcorner" }));
+            
+            stage.insert(new Q.Wall({ x: 2, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 4, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 5, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 6, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 7, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 9, y: 0, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 10, y: 0, wall:"topwall" }));
+            
+            stage.insert(new Q.Wall({ x: 11, y: 0, wall:"toprightcorner" }));
+            stage.insert(new Q.Wall({ x: 11, y: 1, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 2, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 3, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 4, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 5, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 6, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 7, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 8, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 9, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 11, y: 10, wall:"bottomrightcorner" }));
+            
+            stage.insert(new Q.Wall({ x: 2, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 4, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 5, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 6, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 7, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 9, y: 10, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 10, y: 10, wall:"bottomwall" }));
 
+            //inside
+            
+            stage.insert(new Q.Wall({ x: 3, y: 2, wall:"topleftcorner" }));
+            stage.insert(new Q.Wall({ x: 3, y: 3, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 4, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 5, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 6, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 7, wall:"leftwall" }));
+            stage.insert(new Q.Wall({ x: 3, y: 8, wall:"bottomleftcorner" }));
+            
+            
+            stage.insert(new Q.Wall({ x: 4, y: 2, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 5, y: 2, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 6, y: 2, wall:"topwall" }));
+            stage.insert(new Q.Wall({ x: 7, y: 2, wall:"topwall" }));
+            //stage.insert(new Q.Wall({ x: 8, y: 2, wall:"topwall" }));
+
+            stage.insert(new Q.Wall({ x: 8, y: 2, wall:"toprightcorner" }));
+            stage.insert(new Q.Wall({ x: 8, y: 3, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 4, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 5, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 6, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 7, wall:"rightwall" }));
+            stage.insert(new Q.Wall({ x: 8, y: 8, wall:"bottomrightcorner" }));     
+            
+            
+            stage.insert(new Q.Wall({ x: 4, y: 8, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 5, y: 8, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 6, y: 8, wall:"bottomwall" }));
+            stage.insert(new Q.Wall({ x: 7, y: 8, wall:"bottomwall" }));
+           // stage.insert(new Q.Wall({ x: 8, y: 8, wall:"bottomwall" }));
+            */
+            
+            
+            
+            //col two
         stage.on("step",function() {
 
         });
