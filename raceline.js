@@ -13,10 +13,20 @@ window.addEventListener("load",function() {
 
       Q.SPRITE_SHIP = 1;
       Q.SPRITE_WALL = 2;
-      Q.TILESIZE = Q.width / 20;
+      Q.SPRITE_GROUND = 3;
+      Q.TILESIZE = 32;
       Q.SPRITE_LINE = 4;
       var line;
       var player;
+
+      function getTileSize() {
+          var twid = Q.width / 20;
+          var thigh = Q.height / 20;
+          if(twid < thigh)
+            return twid;
+          else
+            return thigh;
+      }
 
       Q.component("reposition", {
 
@@ -207,10 +217,10 @@ window.addEventListener("load",function() {
       Q.Sprite.extend("Wall", {
         init: function(p) {
           this._super(p, {
-            type: Q.SPRITE_WALL,
-            collisionMask: Q.SPRITE_SHIP,
+            type: Q.SPRITE_GROUND,
             skipCollide: true,
-            sheet: 'wall',
+            collisionMask: Q.SPRITE_SHIP,
+            sheet: 'spritesheet_wall',
           });
           this.add("2d");
         }
@@ -223,13 +233,25 @@ window.addEventListener("load",function() {
       Q.TileLayer.extend("TrackOne",{
         init: function() {
           this._super({
-            type: Q.SPRITE_WALL,
+            type: Q.SPRITE_GROUND,
             dataAsset: 'track.json',
-            sheet:     'tiles',
+            sheet:     'spritesheet_track',
           });
 
+        }
+      });
+      Q.TileLayer.extend("TrackOneWall",{
+        init: function() {
+          this._super({
+            type: Q.SPRITE_GROUND,
+            dataAsset: 'trackwall.json',
+            sheet:     'spritesheet_wall',
+            tileW: 32,
+            tileH: 32,
+            blockTileW: 32,
+            blockTileH: 32,
+          });
         },
-        
         setup: function() {
           // Clone the top level arriw
           var tiles = this.p.tiles = this.p.tiles.concat();
@@ -239,22 +261,22 @@ window.addEventListener("load",function() {
             for(var x =0;x<row.length;x++) {
               var tile = row[x];
 
-              //set the walls
-              if(tile != 4) {
-                this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
+              if(tile == 0 ) {
                 row[x] = 0;
               }
             }
           }
         }
-
+        
       });
+      
 
       Q.scene("level1",function(stage) {
-         var map = stage.collisionLayer(new Q.TrackOne());
-         map.setup();
-        line = stage.insert(new Q.Line({point:{x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}}));
-        player = stage.insert(new Q.Ship({ x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}));
+        //var map = stage.insert(new Q.TrackOne());
+        var wall = stage.collisionLayer(new Q.TrackOneWall());
+        //wall.setup();
+        line = stage.insert(new Q.Line({point:{x:17 * Q.TILESIZE, y:17 * Q.TILESIZE}}));
+        player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
         
         stage.on("step",function() {
 
@@ -284,8 +306,9 @@ window.addEventListener("load",function() {
       
 
 // Make sure penguin.png is loaded
-Q.load("CarPos1.png, track.json, tiles.png",function() {
-    Q.sheet("tiles","tiles.png", { tileW: 32, tileH: 32 });
+Q.load("CarPos1.png, track.json, trackwall.json, spritesheet_track.png, spritesheet_wall.png",function() {
+    Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
+    Q.sheet("spritesheet_track","spritesheet_track.png", { tileW: 32, tileH: 32 });
     Q.stageScene("level1");
    
  });
