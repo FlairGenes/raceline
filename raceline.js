@@ -324,8 +324,8 @@ window.addEventListener("load",function() {
 
       Q.scene("level1",function(stage) {
         
-        line = stage.insert(new Q.Line({point:{x:Q.width/2, y: Q.height/2}}));
-        player = stage.insert(new Q.Ship({ x: Q.width/2, y: Q.height/2}));
+        line = stage.insert(new Q.Line({point:{x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}}));
+        player = stage.insert(new Q.Ship({ x:9 * Q.TILESIZE, y:9 * Q.TILESIZE}));
         
             
             //outside
