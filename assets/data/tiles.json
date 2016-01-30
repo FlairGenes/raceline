@@ -1,5 +1,5 @@
 {
-    "bound-tl": 
+    "notile":
     {
         "sx": 0,
         "sy": 0,
@@ -8,7 +8,16 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-t": 
+    "corner-tl":
+    {
+        "sx": 0,
+        "sy": 0,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "edge-t": 
     {
         "sx": 32,
         "sy": 0,
@@ -17,7 +26,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-tr": 
+    "corner-tr":
     {
         "sx": 64,
         "sy": 0,
@@ -26,7 +35,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-l": 
+    "edge-l": 
     {
         "sx": 0,
         "sy": 32,
@@ -35,7 +44,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "road-full": 
+    "road": 
     {
         "sx": 32,
         "sy": 32,
@@ -44,7 +53,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-r": 
+    "edge-r": 
     {
         "sx": 64,
         "sy": 32,
@@ -53,7 +62,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-bl": 
+    "corner-bl":
     {
         "sx": 0,
         "sy": 64,
@@ -62,7 +71,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-b": 
+    "edge-b": 
     {
         "sx": 32,
         "sy": 64,
@@ -71,7 +80,7 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-br": 
+    "corner-br":
     {
         "sx": 64,
         "sy": 64,
@@ -80,13 +89,49 @@
         "tileh": 32,
         "frames": 1
     },
-    "bound-all":
+    "edge-tl": 
     {
-        "sx": 96,
+        "sx": 0,
+        "sy": 96,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "edge-tr": 
+    {
+        "sx": 64,
         "sy": 0,
         "cols": 1,
         "tilew": 32,
         "tileh": 32,
         "frames": 1
-    }
+    },
+    "edge-bl": 
+    {
+        "sx": 0,
+        "sy": 64,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "edge-br": 
+    {
+        "sx": 64,
+        "sy": 64,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "background":
+    {
+        "sx": 0,
+        "sy": 96,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
 }
