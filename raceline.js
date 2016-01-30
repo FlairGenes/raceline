@@ -51,25 +51,40 @@ window.addEventListener("load",function() {
           ctx.fill();
         }
       });
+      Q.Sprite.extend("LineSprite", {
+          draw: function(ctx) {
+          var p = this.p;
+          ctx.strokeStyle = '#ff0000';
+
+          ctx.beginPath();
+          ctx.moveTo(p.points[0][0], p.points[0][1]);
+          for(var i =1, max = p.points.length;i<max;i++) {
+            ctx.lineTo(p.points[i][0], p.points[i][1]);
+          }
+          ctx.lineWidth = 10;
+          ctx.stroke();
+        }
+      })
 
 
       //Player
-      Q.VectorSprite.extend("Ship", {
+      Q.Sprite.extend("Ship", {
         init: function(p) {
           this._super(p, {
             type: Q.SPRITE_NONE,
             collisionMask: Q.SPRITE_WALL,
-            w: 10,
-            h: 20,
+            w: 25,
+            h: 25,
             omega: 0,
             omegaDelta: 700,
             maxOmega: 400,
             acceleration: 2,
             speed: 0,
             resistance: 0.01,
-            points: [ [0, -10 ], [ 5, 10 ], [ -5,10 ]],
+            //points: [ [0, -10 ], [ 5, 10 ], [ -5,10 ]],
             bulletSpeed: 500,
-            activated: false
+            activated: false,
+            asset: "CarPos1.png"
           });
           this.add("2d, reposition, aiBounce");
 
@@ -121,12 +136,6 @@ window.addEventListener("load",function() {
             p.vy += thrustY ;            
             p.vx = p.vx * (1 - p.resistance);
             p.vy = p.vy * (1 - p.resistance);    
-            if(line.points){
-                line.points.push([p.x - 1, p.point.y - 1 ]);
-                line.points.push([p.x + 1, p.y - 1 ]);
-                line.points.push([p.x + 1, p.y + 1 ]);
-                line.points.push([px - 1, p.y + 1 ]);
-            }
         },
 
         draw: function(ctx) {
@@ -149,7 +158,7 @@ window.addEventListener("load",function() {
       
       
       //Line
-      Q.VectorSprite.extend("Line", {
+      Q.LineSprite.extend("Line", {
         init: function(p) {
           p = this.createShape(p);
           
@@ -160,7 +169,7 @@ window.addEventListener("load",function() {
             skipCollide: true,
             points: []
           });
-          this.add("2d");
+          this.add("1d");
 
           //this.on("hit.sprite",this,"collision");
         },
@@ -187,11 +196,11 @@ window.addEventListener("load",function() {
        step: function(){
           var p = this.p;
 
-          p.points.push([player.p.x - 1, player.p.y - 1 ]);
-          p.points.push([player.p.x + 1, player.p.y - 1 ]);
-          p.points.push([player.p.x  + 1, player.p.y + 1 ]);
-          p.points.push([player.p.x  - 1, player.p.y + 1 ]);
-       }
+          p.points.push([player.p.x, player.p.y]);
+          if(p.points.length > 5000)
+            p.points.shift();
+       },
+       
       });
       
       Q.VectorSprite.extend("Wall", {
@@ -318,10 +327,10 @@ window.addEventListener("load",function() {
 
       Q.scene("level1",function(stage) {
         
-        
-        player = stage.insert(new Q.Ship({ x: Q.width/2, y: Q.height/2}));
         line = stage.insert(new Q.Line({point:{x:Q.width/2, y: Q.height/2}}));
-            /*
+        player = stage.insert(new Q.Ship({ x: Q.width/2, y: Q.height/2}));
+        
+            
             //outside
             stage.insert(new Q.Wall({ x: 1, y: 0, wall:"topleftcorner" }));
             stage.insert(new Q.Wall({ x: 1, y: 1, wall:"leftwall" }));
@@ -398,7 +407,7 @@ window.addEventListener("load",function() {
             stage.insert(new Q.Wall({ x: 6, y: 8, wall:"bottomwall" }));
             stage.insert(new Q.Wall({ x: 7, y: 8, wall:"bottomwall" }));
            // stage.insert(new Q.Wall({ x: 8, y: 8, wall:"bottomwall" }));
-            */
+            
             
             
             
@@ -428,6 +437,13 @@ window.addEventListener("load",function() {
           container.fit(20);
         });
 
-      Q.stageScene("level1");
+      
+
+// Make sure penguin.png is loaded
+Q.load("CarPos1.png",function() {
+
+    Q.stageScene("level1");
+   
+ });
 
     });
