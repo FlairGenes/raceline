@@ -138,10 +138,6 @@ window.addEventListener("load",function() {
             p.vy = p.vy * (1 - p.resistance);    
         },
 
-        draw: function(ctx) {
-          if(this.p.activated) { this._super(ctx); }
-        },
-
         reset: function() {
           Q._extend(this.p,{ 
             x: Q.width/2,
@@ -235,6 +231,7 @@ window.addEventListener("load",function() {
               p.points.push([m,m]);
               //bottom left
               p.points.push([w,m]);
+              p.assets
                
           }
           if(p.wall === "rightwall") {
