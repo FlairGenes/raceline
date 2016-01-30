@@ -1,9 +1,11 @@
  // 1. Wait for the onload even
 window.addEventListener("load",function() {
 
-      var Q = window.Q = Quintus({ development: true })
-              .include("Sprites, Scenes, Input, 2D, Touch, UI")
-              .setup({ maximize: true }).touch();
+      // James: I'm getting 'Invalid Module: Audio' here?
+      var Q = window.Q = Quintus(
+          { development: true, audioSupported: [ "ogg", "mp3" ] })
+              .include("Audio, Sprites, Scenes, Input, 2D, Touch, UI")
+              .setup({ maximize: true }).touch().enableSound();
 
       Q.input.keyboardControls();
       Q.input.joypadControls();
@@ -136,6 +138,12 @@ window.addEventListener("load",function() {
 
             p.vx += thrustX * p.acceleration;
             p.vy += thrustY * p.acceleration;
+            
+            // Play gas SFX! Or stop it if there's no more
+            Q.audio.play("forward-single-2.mp3", 
+                { debounce: 381 })
+          } else {
+            Q.audio.stop("forward-single-2.mp3")    
           }
 
             // decay velcoity if no thrust            
@@ -239,11 +247,11 @@ window.addEventListener("load",function() {
             for(var x =0;x<row.length;x++) {
               var tile = row[x];
 
-              //set the walls
-              if(tile != 4) {
-                this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
-                row[x] = 0;
-              }
+            //   //set the walls
+            //   if(tile != 4) {
+            //     this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
+            //     row[x] = 0;
+            //   }
             }
           }
         }
@@ -281,10 +289,8 @@ window.addEventListener("load",function() {
           container.fit(20);
         });
 
-      
-
-// Make sure penguin.png is loaded
-Q.load("CarPos1.png, track.json, tiles.png",function() {
+Q.load(
+    "CarPos1.png, track.json, tiles.png, forward-single-2.mp3", function() {
     Q.sheet("tiles","tiles.png", { tileW: 32, tileH: 32 });
     Q.stageScene("level1");
    
