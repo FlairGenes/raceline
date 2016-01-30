@@ -286,6 +286,8 @@ window.addEventListener("load",function() {
         line = stage.insert(new Q.Line({point:{x:17 * Q.TILESIZE, y:17 * Q.TILESIZE}}));
         player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
         
+        stage.add("viewport").follow(player);
+        
         stage.on("step",function() {
 
         });
