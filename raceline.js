@@ -244,9 +244,6 @@ window.addEventListener("load",function() {
         }
 
       });
-      
-
-
 
       Q.scene("level1",function(stage) {
          var map = stage.collisionLayer(new Q.TrackOne());
