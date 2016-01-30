@@ -106,10 +106,13 @@ window.addEventListener("load",function() {
             p.vx += thrustX * p.acceleration;
             p.vy += thrustY * p.acceleration;
           }
-          
+
             //drag
             var thrustX = Math.sin(p.angle * Math.PI / 180),
                 thrustY = -Math.cos(p.angle * Math.PI / 180);
+
+            p.vx += thrustX ;
+            p.vy += thrustY ;            
             p.vx = p.vx * (1 - p.resistance);
             p.vy = p.vy * (1 - p.resistance);    
                
