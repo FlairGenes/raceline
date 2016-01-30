@@ -1,0 +1,92 @@
+{
+    "bound-tl": 
+    {
+        "sx": 0,
+        "sy": 0,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-t": 
+    {
+        "sx": 32,
+        "sy": 0,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-tr": 
+    {
+        "sx": 64,
+        "sy": 0,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-l": 
+    {
+        "sx": 0,
+        "sy": 32,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "road-full": 
+    {
+        "sx": 32,
+        "sy": 32,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-r": 
+    {
+        "sx": 64,
+        "sy": 32,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-bl": 
+    {
+        "sx": 0,
+        "sy": 64,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-b": 
+    {
+        "sx": 32,
+        "sy": 64,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-br": 
+    {
+        "sx": 64,
+        "sy": 64,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    },
+    "bound-all":
+    {
+        "sx": 96,
+        "sy": 0,
+        "cols": 1,
+        "tilew": 32,
+        "tileh": 32,
+        "frames": 1
+    }
+}
