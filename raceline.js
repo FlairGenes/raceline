@@ -67,7 +67,7 @@ window.addEventListener("load",function() {
       })
 
 
-      //Player
+      // Player
       Q.Sprite.extend("Ship", {
         init: function(p) {
           this._super(p, {
@@ -75,12 +75,12 @@ window.addEventListener("load",function() {
             collisionMask: Q.SPRITE_WALL,
             w: 25,
             h: 25,
-            omega: 0,
-            omegaDelta: 700,
+            omega: 0,                   // omega: rate of angle change
+            omegaDelta: 150,            // amount of omega applied when turning
             maxOmega: 400,
-            acceleration: 2,
+            acceleration: 20,           // tweak acceleration and reisstance for handling!
             speed: 0,
-            resistance: 0.01,
+            resistance: 0.04,
             //points: [ [0, -10 ], [ 5, 10 ], [ -5,10 ]],
             bulletSpeed: 500,
             activated: false,
@@ -107,16 +107,26 @@ window.addEventListener("load",function() {
 
           var p = this.p;
           p.angle += p.omega * dt;
-          p.omega *=  1 - 1 * dt;
-
+        //   p.omega *=  1 - 1 * dt;    // old: decay omega if not turning
+          p.omega = 0                   // new: no omega if not  turning
+          
+           // Old turning code: turn buttons 'accelerated' rotation
+        //   if(Q.inputs["right"]) { 
+        //     p.omega += p.omegaDelta * dt;
+        //     if(p.omega > p.maxOmega) { p.omega = p.maxOmega; }
+        //   } else if(Q.inputs["left"]) {
+        //     p.omega -= p.omegaDelta * dt;
+        //     if(p.omega < -p.maxOmega) { p.omega = -p.maxOmega; }
+        //   }
+          
+          // New turning code: turn buttons 'set' rotation
           if(Q.inputs["right"]) { 
-            p.omega += p.omegaDelta * dt;
-            if(p.omega > p.maxOmega) { p.omega = p.maxOmega; }
+            p.omega = p.omegaDelta;
           } else if(Q.inputs["left"]) {
-            p.omega -= p.omegaDelta * dt;
-            if(p.omega < -p.maxOmega) { p.omega = -p.maxOmega; }
+            p.omega = -p.omegaDelta;
           }
 
+          // Wrap angle to 0–360 degrees
           if(p.angle > 360) { p.angle -= 360; }
           if(p.angle < 0) { p.angle += 360; }
 
@@ -128,12 +138,7 @@ window.addEventListener("load",function() {
             p.vy += thrustY * p.acceleration;
           }
 
-            //drag
-            var thrustX = Math.sin(p.angle * Math.PI / 180),
-                thrustY = -Math.cos(p.angle * Math.PI / 180);
-
-            //p.vx += thrustX ;
-            //p.vy += thrustY ;            
+            // decay velcoity if no thrust            
             p.vx = p.vx * (1 - p.resistance);
             p.vy = p.vy * (1 - p.resistance);    
         },
@@ -235,7 +240,7 @@ window.addEventListener("load",function() {
               var tile = row[x];
 
               //set the walls
-              if(tile >= 5) {
+              if(tile != 4) {
                 this.stage.insert(new Q.Wall(Q.tilePos(x,y,tile - 5)));
                 row[x] = 0;
               }
