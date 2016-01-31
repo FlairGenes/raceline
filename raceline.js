@@ -13,20 +13,19 @@ window.addEventListener("load",function() {
                })
               .touch()
               .enableSound();
-      
+      var mute_sound = false;      
       // No image smoothing!
       Q.ctx.imageSmoothingEnabled = false;
       Q.ctx.mozImageSmoothingEnabled = false;
-      Q.ctx.webkitImageSmoothingEnabled = false;   
-    //   Q.ctx.fontSize = "500%"; 
+      Q.ctx.webkitImageSmoothingEnabled = false;
 
       // Control setup
       Q.input.keyboardControls();
       Q.input.joypadControls();
       Q.input.touchControls({
           controls: [
+              ['down', 's'],
               ['up', '↑'],
-              [],
               [],
               ['left', '←'],
               ['right', '→']
@@ -172,7 +171,7 @@ window.addEventListener("load",function() {
         },
         // collision: play a pop sound effect ^.^
         collision: function(col) {
-            Q.audio.play("pops.mp3", { debounce: 50 })
+            if (mute_sound == false) Q.audio.play("pops.mp3", { debounce: 500 })
         },
 
         checkActivation: function() {
@@ -241,12 +240,8 @@ window.addEventListener("load",function() {
           // New turning code: turn buttons 'set' rotation
           if(Q.inputs["right"]) { 
             p.omega = p.omegaDelta;
-            // Q.audio.play("turn-2.mp3", 
-            //     { debounce: 1336 })
           } else if(Q.inputs["left"]) {
             p.omega = -p.omegaDelta;
-            // Q.audio.play("turn-2.mp3", 
-            //     { debounce: 1336 })
           } else {
             Q.audio.stop("turn-2.mp3")
           }
@@ -263,10 +258,23 @@ window.addEventListener("load",function() {
             p.vy += thrustY * p.acceleration;
             carmoving = true;
             // Play gas SFX! Or stop it if there's no more
-            Q.audio.play("forward-single-2.mp3", 
-                { debounce: 381 })
+            if (mute_sound == false) Q.audio.play("forward-single-2.mp3", { debounce: 381 })
           } else {
+              carmoving = false;
             Q.audio.stop("forward-single-2.mp3")    
+          }
+          
+          // down is mute
+          if(Q.inputs["down"]) {
+              mute_sound = !mute_sound;              // toggle mute
+            //   mute_sound == true
+              if (mute_sound == true) {
+                  Q.audio.stop();
+              } else {
+                  Q.audio.stop();
+                  Q.audio.play("bg-music.mp3", { loop: true });
+              }
+              
           }
 
             // decay velcoity if no thrust            
@@ -391,11 +399,11 @@ window.addEventListener("load",function() {
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
-            dataAsset: 'trackwall.json',
+            dataAsset: 'trackwall.json', //<----MITCHELL CHANGE THIS
             sheet:     'spritesheet_wall',
         }));
         var map = stage.insert(new Q.TileLayer({
-            dataAsset: 'track.json',
+            dataAsset: 'track.json', //<----MITCHELL CHANGE THIS TOO
             sheet:     'spritesheet_track'
         }));
         //wall.setup();
@@ -442,6 +450,8 @@ Q.load(
     ["CarPos1.png",
     "track.json",
     "trackwall.json",
+    "track1.json",
+    "trackwall1.json",
     "spritesheet_track.png",
     "spritesheet_wall.png",
     "forward-single-2.mp3",
