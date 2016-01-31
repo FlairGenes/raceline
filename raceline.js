@@ -25,7 +25,7 @@ window.addEventListener("load",function() {
       Q.input.joypadControls();
       Q.input.touchControls({
           controls: [
-              ['down', '🔊'],�,
+              ['down', '🔊'],
               ['up', '↑'],
               [],
               
@@ -173,7 +173,7 @@ window.addEventListener("load",function() {
         },
         // collision: play a pop sound effect ^.^
         collision: function(col) {
-            if (mute.sound == false) Q.audio.play("pops.mp3", { debounce: 50 })
+            if (mute_sound == false) Q.audio.play("pops.mp3", { debounce: 50 })
         },
 
         checkActivation: function() {
@@ -260,15 +260,15 @@ window.addEventListener("load",function() {
             p.vy += thrustY * p.acceleration;
             carmoving = true;
             // Play gas SFX! Or stop it if there's no more
-            if (mute.sound == false) Q.audio.play("forward-single-2.mp3", { debounce: 381 })
+            if (mute_sound == false) Q.audio.play("forward-single-2.mp3", { debounce: 381 })
           } else {
             Q.audio.stop("forward-single-2.mp3")    
           }
           
           // down is toggle mute
           if(Q.inputs["down"]) {
-              mute.sound = !mute.sound;
-              if (mute.sound == true) {
+              mute_sound = !mute_sound;
+              if (mute_sound == true) {
                   Q.audio.stop();
               } else {
                   Q.audio.play("bg-music.mp3", { loop: true })
