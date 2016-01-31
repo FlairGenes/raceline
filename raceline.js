@@ -5,7 +5,13 @@ window.addEventListener("load",function() {
       var Q = window.Q = Quintus(
           { development: true, audioSupported: [ "ogg", "mp3" ] })
               .include("Audio, Sprites, Scenes, Input, 2D, Touch, UI")
-              .setup({ maximize: true }).touch().enableSound();
+              .setup("raceline-canvas", { maximize: true })
+              .touch()
+              .enableSound();
+      // No image smoothing!
+      Q.ctx.imageSmoothingEnabled = false;
+      Q.ctx.mozImageSmoothingEnabled = false;
+      Q.ctx.webkitImageSmoothingEnabled = false;      
 
       Q.input.keyboardControls();
       Q.input.joypadControls();
@@ -77,8 +83,25 @@ window.addEventListener("load",function() {
           ctx.stroke();
         }
       })
+      Q.UI.Text.extend("Score",{ 
+        init: function(p) {
+            this._super({
+            label: "0",
+            color: "#ffffff"
+            });
 
+            Q.state.on("change.score",this,"score");
+        },
 
+        score: function(score) {
+            this.p.label = score;
+        },
+        step: function(){
+            this.p.x = player.p.x - 50;
+            this.p.y = player.p.y - 100;
+            //this.p.x = player.p.y - Q.height/3;
+        }
+        });
       // Player
       Q.Sprite.extend("Ship", {
         init: function(p) {
@@ -244,7 +267,7 @@ window.addEventListener("load",function() {
       
 
       Q.scene("level1",function(stage) {
-
+        Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
             dataAsset: 'trackwall.json',
@@ -258,9 +281,9 @@ window.addEventListener("load",function() {
         line = stage.insert(new Q.Line());
         player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
         
-        stage.add("viewport").follow(player);
+        var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
-        
+        stage.insert(new Q.Score());
         stage.on("step",function() {
 
         });
