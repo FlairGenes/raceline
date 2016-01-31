@@ -17,18 +17,16 @@ window.addEventListener("load",function() {
       // No image smoothing!
       Q.ctx.imageSmoothingEnabled = false;
       Q.ctx.mozImageSmoothingEnabled = false;
-      Q.ctx.webkitImageSmoothingEnabled = false;   
-    //   Q.ctx.fontSize = "500%"; 
+      Q.ctx.webkitImageSmoothingEnabled = false;
 
       // Control setup
       Q.input.keyboardControls();
       Q.input.joypadControls();
       Q.input.touchControls({
           controls: [
-              ['down', '🔊'],
+              ['down', 's'],
               ['up', '↑'],
               [],
-              
               ['left', '←'],
               ['right', '→']
           ]
@@ -266,13 +264,15 @@ window.addEventListener("load",function() {
             Q.audio.stop("forward-single-2.mp3")    
           }
           
-          // down is toggle mute
+          // down is mute
           if(Q.inputs["down"]) {
-              mute_sound = !mute_sound;
+              mute_sound = !mute_sound;              // toggle mute
+            //   mute_sound == true
               if (mute_sound == true) {
                   Q.audio.stop();
               } else {
-                  Q.audio.play("bg-music.mp3", { loop: true })
+                  Q.audio.stop();
+                  Q.audio.play("bg-music.mp3", { loop: true });
               }
               
           }
