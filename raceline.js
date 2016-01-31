@@ -42,7 +42,7 @@ window.addEventListener("load",function() {
       Q.SPRITE_LINE = 4;
       var line;
       var player;
-      var LINE_LENGTH = 750;
+      var LINE_LENGTH = 1500;
       var carmoving = false;
 
       function getTileSize() {
@@ -399,11 +399,11 @@ window.addEventListener("load",function() {
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
-            dataAsset: 'trackwall.json', //<----MITCHELL CHANGE THIS
+            dataAsset: 'trackwall1.json', //<----MITCHELL CHANGE THIS
             sheet:     'spritesheet_wall',
         }));
         var map = stage.insert(new Q.TileLayer({
-            dataAsset: 'track.json', //<----MITCHELL CHANGE THIS TOO
+            dataAsset: 'track1.json', //<----MITCHELL CHANGE THIS TOO
             sheet:     'spritesheet_track'
         }));
         //wall.setup();
