@@ -231,7 +231,6 @@ window.addEventListener("load",function() {
       Q.TileLayer.extend("TrackOne",{
         init: function() {
           this._super({
-            type: Q.SPRITE_GROUND,
             dataAsset: 'track.json',
             sheet:     'spritesheet_track',
           });
@@ -268,7 +267,7 @@ window.addEventListener("load",function() {
       Q.scene("level1",function(stage) {
 
         var wall = stage.collisionLayer(new Q.TrackOneWall());
-                //var map = stage.insert(new Q.TrackOne());
+        var map = stage.insert(new Q.TrackOne());
         //wall.setup();
         line = stage.insert(new Q.Line({point:{x:17 * Q.TILESIZE, y:17 * Q.TILESIZE}}));
         player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
