@@ -44,6 +44,7 @@ window.addEventListener("load",function() {
       var line;
       var player;
       var LINE_LENGTH = 750;
+      var carmoving = false;
 
       function getTileSize() {
           var twid = Q.width / 20;
@@ -163,7 +164,7 @@ window.addEventListener("load",function() {
           });
           this.add("2d, reposition, aiBounce");
           this.on("hit",this,"collision");       // register a collision event callback
-
+          carmoving = false;
           Q.input.on("fire",this,"fire");
 
           this.activationObject = new Q.Sprite({ x: Q.width/2, y: Q.height/2, w: 100, h: 100 });
@@ -182,7 +183,8 @@ window.addEventListener("load",function() {
 
         },
         checkLine: function() {
-            
+            if(carmoving){
+                
             var bb = {
                 ix: player.p.x,
                 iy: player.p.y,
@@ -190,7 +192,7 @@ window.addEventListener("load",function() {
                 ay: player.p.y + player.p.h
                 }            
             line.p.points.forEach(function(p){
-
+                
                 if( bb.ix <= p[0] && p[0] <= bb.ax && bb.iy <= p[1] && p[1] <= bb.ay ) {
                     Q.state.inc("score", 1);
                     if(Q.state.get("score") >= 1000) {
@@ -200,9 +202,10 @@ window.addEventListener("load",function() {
                     return;
 
                 }
-                
+            
                 
             });
+            }
             //no collide
             Q.state.dec("score", 1);
             if(Q.state.get("score") < 0)
@@ -252,7 +255,7 @@ window.addEventListener("load",function() {
 
             p.vx += thrustX * p.acceleration;
             p.vy += thrustY * p.acceleration;
-            
+            carmoving = true;
             // Play gas SFX! Or stop it if there's no more
             Q.audio.play("forward-single-2.mp3", 
                 { debounce: 381 })
