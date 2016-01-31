@@ -323,9 +323,12 @@ window.addEventListener("load",function() {
             
 
             stage.insert(new Q.UI.Text({label: "RACE LINE", x: Q.width/2, y: Q.height/2, size: 100, color:"white"}));
-            var button = stage.insert(new Q.UI.Button({ x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC",
-                                                  label: "Play" }));
+            var button = stage.insert(new Q.UI.Button(
+                {
+                    x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC", label: "Play"
+                }));
           button.on("click",function() {
+            Q.audio.play("bg-music.mp3", { loop: true })
             Q.clearStages();
             Q.stageScene('level1');
           });                             
@@ -390,6 +393,7 @@ Q.load(
     "spritesheet_wall.png",
     "forward-single-2.mp3",
     "pops.mp3",
+    "bg-music.mp3",
     "turn-2.mp3"],
     function() {
         Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
