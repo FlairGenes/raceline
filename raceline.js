@@ -43,6 +43,8 @@ window.addEventListener("load",function() {
       Q.SPRITE_LINE = 4;
       var line;
       var player;
+      var LINE_LENGTH = 750;
+      var carmoving = false;
 
       function getTileSize() {
           var twid = Q.width / 20;
@@ -120,6 +122,26 @@ window.addEventListener("load",function() {
             //this.p.x = player.p.y - Q.height/3;
         }
         });
+      Q.UI.Text.extend("Level",{ 
+        init: function(p) {
+            this._super({
+            label: "level: " + Q.state.get("level"),
+            color: "#ffffff"
+            });
+
+            Q.state.on("change.level",this,"level");
+        },
+
+        level: function(score) {
+            var level = Q.state.get("level");
+            this.p.label = "level:" +  level;
+        },
+        step: function(){
+            this.p.x = player.p.x + 50;
+            this.p.y = player.p.y - 100;
+            //this.p.x = player.p.y - Q.height/3;
+        }
+        });
       // Player
       Q.Sprite.extend("Ship", {
         init: function(p) {
@@ -142,7 +164,7 @@ window.addEventListener("load",function() {
           });
           this.add("2d, reposition, aiBounce");
           this.on("hit",this,"collision");       // register a collision event callback
-
+          carmoving = false;
           Q.input.on("fire",this,"fire");
 
           this.activationObject = new Q.Sprite({ x: Q.width/2, y: Q.height/2, w: 100, h: 100 });
@@ -161,7 +183,8 @@ window.addEventListener("load",function() {
 
         },
         checkLine: function() {
-            
+            if(carmoving){
+                
             var bb = {
                 ix: player.p.x,
                 iy: player.p.y,
@@ -169,19 +192,26 @@ window.addEventListener("load",function() {
                 ay: player.p.y + player.p.h
                 }            
             line.p.points.forEach(function(p){
-
+                
                 if( bb.ix <= p[0] && p[0] <= bb.ax && bb.iy <= p[1] && p[1] <= bb.ay ) {
                     Q.state.inc("score", 1);
-                    if(Q.state.get("score") >= 1000) {
+                    //load level 2
+                    if(Q.state.get("level") === 1 && Q.state.get("score") >= 1000) {
                         Q.clearStages();
                         Q.stageScene('level2');
+                    }
+                    //end game
+                    if(Q.state.get("level") === 2 && Q.state.get("score") >= 1000) {
+                        Q.clearStages();
+                        Q.stageScene('endGame');
                     }
                     return;
 
                 }
-                
+            
                 
             });
+            }
             //no collide
             Q.state.dec("score", 1);
             if(Q.state.get("score") < 0)
@@ -231,7 +261,7 @@ window.addEventListener("load",function() {
 
             p.vx += thrustX * p.acceleration;
             p.vy += thrustY * p.acceleration;
-            
+            carmoving = true;
             // Play gas SFX! Or stop it if there's no more
             Q.audio.play("forward-single-2.mp3", 
                 { debounce: 381 })
@@ -292,7 +322,7 @@ window.addEventListener("load",function() {
             var thrustX = Math.sin(player.p.angle * Math.PI / 180),
                 thrustY = -Math.cos(player.p.angle * Math.PI / 180);
           p.points.push([player.p.x - thrustX * 40 , player.p.y - thrustY * 40]);
-          if(p.points.length > 750)
+          if(p.points.length > LINE_LENGTH)
             p.points.shift();
        },
        
@@ -316,19 +346,19 @@ window.addEventListener("load",function() {
         //Q.clearStage(1); 
 
         var bg = stage.insert(new Q.Sprite({w: Q.width, h: Q.height}));
-        
-
         stage.insert(new Q.UI.Text({label: "RACE LINE", x: Q.width/2, y: Q.height/2, size: 100, color:"white"}));
-        var button = stage.insert(new Q.UI.Button({ x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC",
-                                                label: "Play" }));
-        button.on("click",function() {
-        Q.clearStages();
-        Q.stageScene('level1');
-        });                             
-      });
-        
+        var button = stage.insert(new Q.UI.Button(
+            {
+              x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC", label: "Play"
+            }));
+          button.on("click",function() {
+            Q.audio.play("bg-music.mp3", { loop: true })
+            Q.clearStages();
+            Q.stageScene('level1');
+          });                             
+        });
       Q.scene("level1",function(stage) {
-
+        Q.state.set("level",1);
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
@@ -350,13 +380,14 @@ window.addEventListener("load",function() {
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
         stage.insert(new Q.Score());
+        stage.insert(new Q.Level());
                 Q.state.set("score", 0);
         stage.on("step",function() {
 
         });
       });
       Q.scene("level2",function(stage) {
-
+        Q.state.set("level",2);
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
@@ -378,6 +409,7 @@ window.addEventListener("load",function() {
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
         stage.insert(new Q.Score());
+        stage.insert(new Q.Level());
                 Q.state.set("score", 0);
         stage.on("step",function() {
 
@@ -385,23 +417,22 @@ window.addEventListener("load",function() {
       });
 
       Q.scene('endGame',function(stage) {
-        var container = stage.insert(new Q.UI.Container({
-          x: Q.width/2, y: Q.height/2, fill: "rgba(255,255,255,0.5)"
-          }));
+        Q.state.set("level",0);
 
-          var button = container.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
-                                                         label: "Play Again" }))         
-          var label = container.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
-                                       label: stage.options.label }));
-          // When the button is clicked, clear all the stages
-          // and restart the game.
+        // Clear the hud out
+        //Q.clearStage(1); 
+
+        var bg = stage.insert(new Q.Sprite({w: Q.width, h: Q.height}));
+        stage.insert(new Q.UI.Text({label: "WINNER!", x: Q.width/2, y: Q.height/2, size: 100, color:"white"}));
+        var button = stage.insert(new Q.UI.Button(
+            {
+              x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC", label: "Play Again"
+            }));
           button.on("click",function() {
+            //Q.audio.play("bg-music.mp3", { loop: true })
             Q.clearStages();
-            Q.stageScene('level1');
-          });
-
-          // Expand the container to visibily fit it's contents
-          container.fit(20);
+            Q.stageScene('title');
+          });                             
         });
 
       
@@ -415,6 +446,7 @@ Q.load(
     "spritesheet_wall.png",
     "forward-single-2.mp3",
     "pops.mp3",
+    "bg-music.mp3",
     "turn-2.mp3"],
     function() {
         Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
