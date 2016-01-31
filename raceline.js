@@ -11,18 +11,19 @@ window.addEventListener("load",function() {
       // No image smoothing!
       Q.ctx.imageSmoothingEnabled = false;
       Q.ctx.mozImageSmoothingEnabled = false;
-      Q.ctx.webkitImageSmoothingEnabled = false;      
+      Q.ctx.webkitImageSmoothingEnabled = false;   
+    //   Q.ctx.fontSize = "500%"; 
 
       // Control setup
       Q.input.keyboardControls();
       Q.input.joypadControls();
       Q.input.touchControls({
           controls: [
-              ['up', '⬆️'],
+              ['up', '↑'],
               [],
               [],
-              ['left', '⬅️'],
-              ['right', '➡️']
+              ['left', '←'],
+              ['right', '→']
           ]
       });
 
