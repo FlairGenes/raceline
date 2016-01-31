@@ -213,7 +213,7 @@ window.addEventListener("load",function() {
           var p = this.p;
 
           p.points.push([player.p.x, player.p.y]);
-          if(p.points.length > 5000)
+          if(p.points.length > 2000)
             p.points.shift();
        },
        
