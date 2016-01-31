@@ -8,6 +8,7 @@ window.addEventListener("load",function() {
               .setup("raceline-canvas", { maximize: true })
               .touch()
               .enableSound();
+      
       // No image smoothing!
       Q.ctx.imageSmoothingEnabled = false;
       Q.ctx.mozImageSmoothingEnabled = false;
@@ -73,7 +74,7 @@ window.addEventListener("load",function() {
           draw: function(ctx) {
           var p = this.p;
           ctx.strokeStyle = '#ff0000';
-
+          this.p.type = Q.SPRITE_LINE;
           ctx.beginPath();
           ctx.moveTo(p.points[0][0], p.points[0][1]);
           for(var i =1, max = p.points.length;i<max;i++) {
@@ -94,7 +95,8 @@ window.addEventListener("load",function() {
         },
 
         score: function(score) {
-            this.p.label = score;
+            score = Q.state.get("score");
+            this.p.label = score + ' ' ;
         },
         step: function(){
             this.p.x = player.p.x - 50;
@@ -107,7 +109,7 @@ window.addEventListener("load",function() {
         init: function(p) {
           this._super(p, {
             type: Q.SPRITE_NONE,
-            collisionMask: Q.SPRITE_WALL,
+            collisionMask: Q.SPRITE_WALL | Q.SPRITE_LINE,
             w: 25,
             h: 25,
             omega: 0,                   // omega: rate of angle change
@@ -145,7 +147,6 @@ window.addEventListener("load",function() {
           if(!this.p.activated) {
             return this.checkActivation();
           }
-
           var p = this.p;
           p.angle += p.omega * dt;
         //   p.omega *=  1 - 1 * dt;    // old: decay omega if not turning
@@ -216,24 +217,23 @@ window.addEventListener("load",function() {
         init: function(p) {
           p = this.createShape(p);
           
-          this._super(p, {
-            type: Q.SPRITE_LINE,
-            collisionMask: Q.SPRITE_SHIP,
-            omega: Math.random() * 100,
-            skipCollide: true,
-            points: []
-          });
-          this.add("2d");
+          this._super(p);
 
-          //this.on("hit.sprite",this,"collision");
+          this.on("sensor");
+        },
+        sensor: function(){  
+            player.p.acceleration = 30;
+            Q.state.inc("score", 1);
+            console.log('trigger');
         },
 
         createShape: function(p) {
           p = p || {};
 
           p.points = [];
-          
-          
+          p.points.push([p.x , p.y + 20])
+          p.sensor = true;
+          p.type = Q.SPRITE_LINE;
           p.cx = 0;
           p.cy = 0;   
           p.w = Q.width;
@@ -246,8 +246,9 @@ window.addEventListener("load",function() {
        },
        step: function(){
           var p = this.p;
-
-          p.points.push([player.p.x, player.p.y]);
+            var thrustX = Math.sin(player.p.angle * Math.PI / 180),
+                thrustY = -Math.cos(player.p.angle * Math.PI / 180);
+          p.points.push([player.p.x - thrustX * 20 , player.p.y - thrustY * 20]);
           if(p.points.length > 2000)
             p.points.shift();
        },
@@ -267,7 +268,8 @@ window.addEventListener("load",function() {
       
 
       Q.scene("level1",function(stage) {
-        Q.state.reset({score: 0});
+
+        //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
             dataAsset: 'trackwall.json',
@@ -278,12 +280,13 @@ window.addEventListener("load",function() {
             sheet:     'spritesheet_track'
         }));
         //wall.setup();
-        line = stage.insert(new Q.Line());
+        line = stage.insert(new Q.Line(Q.tilePos(17,17,0)));
         player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
         
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
         stage.insert(new Q.Score());
+                Q.state.set("score", 0);
         stage.on("step",function() {
 
         });
