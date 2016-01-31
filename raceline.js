@@ -5,7 +5,12 @@ window.addEventListener("load",function() {
       var Q = window.Q = Quintus(
           { development: true, audioSupported: [ "ogg", "mp3" ] })
               .include("Audio, Sprites, Scenes, Input, 2D, Touch, UI")
-              .setup("raceline-canvas", { maximize: true })
+              .setup({ 
+                  //maximize: true,
+                width: 25 * 32,
+                height: 25 * 32,
+                scaleToFit: true
+               })
               .touch()
               .enableSound();
       
