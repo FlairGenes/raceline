@@ -270,7 +270,7 @@ window.addEventListener("load",function() {
             //   mute_sound == true
               if (mute_sound == true) {
                   Q.audio.stop();
-              } else {
+              } else if (mute_sound == false) {
                   Q.audio.stop();
                   Q.audio.play("bg-music.mp3", { loop: true });
               }
@@ -437,7 +437,7 @@ window.addEventListener("load",function() {
               x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC", label: "Play Again"
             }));
           button.on("click",function() {
-            //Q.audio.play("bg-music.mp3", { loop: true })
+            // Q.audio.play("bg-music.mp3", { loop: true })
             Q.clearStages();
             Q.stageScene('title');
           });                             
