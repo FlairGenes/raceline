@@ -399,11 +399,11 @@ window.addEventListener("load",function() {
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
-            dataAsset: 'trackwall.json',
+            dataAsset: 'trackwall.json', //<----MITCHELL CHANGE THIS
             sheet:     'spritesheet_wall',
         }));
         var map = stage.insert(new Q.TileLayer({
-            dataAsset: 'track.json',
+            dataAsset: 'track.json', //<----MITCHELL CHANGE THIS TOO
             sheet:     'spritesheet_track'
         }));
         //wall.setup();
@@ -450,6 +450,8 @@ Q.load(
     ["CarPos1.png",
     "track.json",
     "trackwall.json",
+    "track2.json",
+    "trackwall2.json",
     "spritesheet_track.png",
     "spritesheet_wall.png",
     "forward-single-2.mp3",
