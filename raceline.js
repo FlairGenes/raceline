@@ -5,7 +5,13 @@ window.addEventListener("load",function() {
       var Q = window.Q = Quintus(
           { development: true, audioSupported: [ "ogg", "mp3" ] })
               .include("Audio, Sprites, Scenes, Input, 2D, Touch, UI")
-              .setup({ maximize: true }).touch().enableSound();
+              .setup("raceline-canvas", { maximize: true })
+              .touch()
+              .enableSound();
+      // No image smoothing!
+      Q.ctx.imageSmoothingEnabled = false;
+      Q.ctx.mozImageSmoothingEnabled = false;
+      Q.ctx.webkitImageSmoothingEnabled = false;      
 
       Q.input.keyboardControls();
       Q.input.joypadControls();
