@@ -296,7 +296,7 @@ window.addEventListener("load",function() {
             var thrustX = Math.sin(player.p.angle * Math.PI / 180),
                 thrustY = -Math.cos(player.p.angle * Math.PI / 180);
           p.points.push([player.p.x - thrustX * 40 , player.p.y - thrustY * 40]);
-          if(p.points.length > 2000)
+          if(p.points.length > 750)
             p.points.shift();
        },
        
