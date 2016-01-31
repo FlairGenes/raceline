@@ -195,9 +195,15 @@ window.addEventListener("load",function() {
                 
                 if( bb.ix <= p[0] && p[0] <= bb.ax && bb.iy <= p[1] && p[1] <= bb.ay ) {
                     Q.state.inc("score", 1);
-                    if(Q.state.get("score") >= 1000) {
+                    //load level 2
+                    if(Q.state.get("level") === 1 && Q.state.get("score") >= 1000) {
                         Q.clearStages();
                         Q.stageScene('level2');
+                    }
+                    //end game
+                    if(Q.state.get("level") === 2 && Q.state.get("score") >= 1000) {
+                        Q.clearStages();
+                        Q.stageScene('endGame');
                     }
                     return;
 
@@ -411,23 +417,22 @@ window.addEventListener("load",function() {
       });
 
       Q.scene('endGame',function(stage) {
-        var container = stage.insert(new Q.UI.Container({
-          x: Q.width/2, y: Q.height/2, fill: "rgba(255,255,255,0.5)"
-          }));
+        Q.state.set("level",0);
 
-          var button = container.insert(new Q.UI.Button({ x: 0, y: 0, fill: "#CCCCCC",
-                                                         label: "Play Again" }))         
-          var label = container.insert(new Q.UI.Text({x:10, y: -10 - button.p.h, 
-                                       label: stage.options.label }));
-          // When the button is clicked, clear all the stages
-          // and restart the game.
+        // Clear the hud out
+        //Q.clearStage(1); 
+
+        var bg = stage.insert(new Q.Sprite({w: Q.width, h: Q.height}));
+        stage.insert(new Q.UI.Text({label: "WINNER!", x: Q.width/2, y: Q.height/2, size: 100, color:"white"}));
+        var button = stage.insert(new Q.UI.Button(
+            {
+              x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC", label: "Play Again"
+            }));
           button.on("click",function() {
+            //Q.audio.play("bg-music.mp3", { loop: true })
             Q.clearStages();
-            Q.stageScene('level1');
-          });
-
-          // Expand the container to visibily fit it's contents
-          container.fit(20);
+            Q.stageScene('title');
+          });                             
         });
 
       
