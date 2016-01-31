@@ -266,6 +266,7 @@ window.addEventListener("load",function() {
             Q.audio.play("forward-single-2.mp3", 
                 { debounce: 381 })
           } else {
+              carmoving = false;
             Q.audio.stop("forward-single-2.mp3")    
           }
 
