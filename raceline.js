@@ -274,6 +274,7 @@ window.addEventListener("load",function() {
         player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
         
         stage.add("viewport").follow(player);
+        stage.viewport.scale;
         
         stage.on("step",function() {
 
