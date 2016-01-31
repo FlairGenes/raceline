@@ -99,10 +99,16 @@ window.addEventListener("load",function() {
             asset: "CarPos1.png"
           });
           this.add("2d, reposition, aiBounce");
+          this.on("hit",this,"collision");       // register a collision event callback
 
           Q.input.on("fire",this,"fire");
 
           this.activationObject = new Q.Sprite({ x: Q.width/2, y: Q.height/2, w: 100, h: 100 });
+        },
+        
+        // collision: play a pop sound effect ^.^
+        collision: function(col) {
+            Q.audio.play("pops.mp3", { debounce: 50 })
         },
 
         checkActivation: function() {
@@ -134,12 +140,12 @@ window.addEventListener("load",function() {
           // New turning code: turn buttons 'set' rotation
           if(Q.inputs["right"]) { 
             p.omega = p.omegaDelta;
-            Q.audio.play("turn-2.mp3", 
-                { debounce: 1336 })
+            // Q.audio.play("turn-2.mp3", 
+            //     { debounce: 1336 })
           } else if(Q.inputs["left"]) {
             p.omega = -p.omegaDelta;
-            Q.audio.play("turn-2.mp3", 
-                { debounce: 1336 })
+            // Q.audio.play("turn-2.mp3", 
+            //     { debounce: 1336 })
           } else {
             Q.audio.stop("turn-2.mp3")
           }
@@ -313,6 +319,7 @@ Q.load(
     "spritesheet_track.png",
     "spritesheet_wall.png",
     "forward-single-2.mp3",
+    "pops.mp3",
     "turn-2.mp3"],
     function() {
         Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
