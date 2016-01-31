@@ -7,8 +7,8 @@ window.addEventListener("load",function() {
               .include("Audio, Sprites, Scenes, Input, 2D, Touch, UI")
               .setup({ 
                   //maximize: true,
-                width: 25 * 32,
-                height: 25 * 32,
+                width: 50 * 32,
+                height: 50 * 32,
                 scaleToFit: true
                })
               .touch()
@@ -313,7 +313,23 @@ window.addEventListener("load",function() {
         //add collision code here
       });
       
+        Q.scene("title",function(stage) {
+            Q.state.set("level",0);
 
+            // Clear the hud out
+            //Q.clearStage(1); 
+
+            var bg = stage.insert(new Q.Sprite({w: Q.width, h: Q.height}));
+            
+
+            stage.insert(new Q.UI.Text({label: "RACE LINE", x: Q.width/2, y: Q.height/2, size: 100, color:"white"}));
+            var button = stage.insert(new Q.UI.Button({ x: Q.width/2, y: Q.height/4 * 3, w: Q.width/8, h: Q.height/8, size: 80, fill: "#CCCCCC",
+                                                  label: "Play" }));
+          button.on("click",function() {
+            Q.clearStages();
+            Q.stageScene('level1');
+          });                             
+        });
       Q.scene("level1",function(stage) {
 
         //Q.state.reset({score: 0});
@@ -378,7 +394,7 @@ Q.load(
     function() {
         Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
         Q.sheet("spritesheet_track","spritesheet_track.png", { tileW: 32, tileH: 32 });
-        Q.stageScene("level1");   
+        Q.stageScene("title");   
 });
 
 });
