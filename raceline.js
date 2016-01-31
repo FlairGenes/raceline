@@ -43,6 +43,7 @@ window.addEventListener("load",function() {
       Q.SPRITE_LINE = 4;
       var line;
       var player;
+      var LINE_LENGTH = 750;
 
       function getTileSize() {
           var twid = Q.width / 20;
@@ -116,6 +117,26 @@ window.addEventListener("load",function() {
         },
         step: function(){
             this.p.x = player.p.x - 50;
+            this.p.y = player.p.y - 100;
+            //this.p.x = player.p.y - Q.height/3;
+        }
+        });
+      Q.UI.Text.extend("Level",{ 
+        init: function(p) {
+            this._super({
+            label: "level: " + Q.state.get("level"),
+            color: "#ffffff"
+            });
+
+            Q.state.on("change.level",this,"level");
+        },
+
+        level: function(score) {
+            var level = Q.state.get("level");
+            this.p.label = "level:" +  level;
+        },
+        step: function(){
+            this.p.x = player.p.x + 50;
             this.p.y = player.p.y - 100;
             //this.p.x = player.p.y - Q.height/3;
         }
@@ -292,7 +313,7 @@ window.addEventListener("load",function() {
             var thrustX = Math.sin(player.p.angle * Math.PI / 180),
                 thrustY = -Math.cos(player.p.angle * Math.PI / 180);
           p.points.push([player.p.x - thrustX * 40 , player.p.y - thrustY * 40]);
-          if(p.points.length > 750)
+          if(p.points.length > LINE_LENGTH)
             p.points.shift();
        },
        
@@ -328,7 +349,7 @@ window.addEventListener("load",function() {
       });
         
       Q.scene("level1",function(stage) {
-
+        Q.state.set("level",1);
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
@@ -350,13 +371,14 @@ window.addEventListener("load",function() {
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
         stage.insert(new Q.Score());
+        stage.insert(new Q.Level());
                 Q.state.set("score", 0);
         stage.on("step",function() {
 
         });
       });
       Q.scene("level2",function(stage) {
-
+        Q.state.set("level",2);
         //Q.state.reset({score: 0});
         var wall = stage.collisionLayer(new Q.TrackWall({
             type: Q.SPRITE_WALL,
@@ -378,6 +400,7 @@ window.addEventListener("load",function() {
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
         stage.insert(new Q.Score());
+        stage.insert(new Q.Level());
                 Q.state.set("score", 0);
         stage.on("step",function() {
 
