@@ -262,6 +262,7 @@ window.addEventListener("load",function() {
             // Play gas SFX! Or stop it if there's no more
             if (mute_sound == false) Q.audio.play("forward-single-2.mp3", { debounce: 381 })
           } else {
+              carmoving = false;
             Q.audio.stop("forward-single-2.mp3")    
           }
           
