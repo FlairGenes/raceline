@@ -173,7 +173,7 @@ window.addEventListener("load",function() {
         },
         // collision: play a pop sound effect ^.^
         collision: function(col) {
-            if (mute_sound == false) Q.audio.play("pops.mp3", { debounce: 50 })
+            if (mute_sound == false) Q.audio.play("pops.mp3", { debounce: 500 })
         },
 
         checkActivation: function() {
