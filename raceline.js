@@ -13,7 +13,7 @@ window.addEventListener("load",function() {
                })
               .touch()
               .enableSound();
-      
+      var mute_sound = false;      
       // No image smoothing!
       Q.ctx.imageSmoothingEnabled = false;
       Q.ctx.mozImageSmoothingEnabled = false;
@@ -25,9 +25,10 @@ window.addEventListener("load",function() {
       Q.input.joypadControls();
       Q.input.touchControls({
           controls: [
+              ['down', '🔊'],�,
               ['up', '↑'],
               [],
-              [],
+              
               ['left', '←'],
               ['right', '→']
           ]
@@ -172,7 +173,7 @@ window.addEventListener("load",function() {
         },
         // collision: play a pop sound effect ^.^
         collision: function(col) {
-            Q.audio.play("pops.mp3", { debounce: 50 })
+            if (mute.sound == false) Q.audio.play("pops.mp3", { debounce: 50 })
         },
 
         checkActivation: function() {
@@ -241,12 +242,8 @@ window.addEventListener("load",function() {
           // New turning code: turn buttons 'set' rotation
           if(Q.inputs["right"]) { 
             p.omega = p.omegaDelta;
-            // Q.audio.play("turn-2.mp3", 
-            //     { debounce: 1336 })
           } else if(Q.inputs["left"]) {
             p.omega = -p.omegaDelta;
-            // Q.audio.play("turn-2.mp3", 
-            //     { debounce: 1336 })
           } else {
             Q.audio.stop("turn-2.mp3")
           }
@@ -263,11 +260,21 @@ window.addEventListener("load",function() {
             p.vy += thrustY * p.acceleration;
             carmoving = true;
             // Play gas SFX! Or stop it if there's no more
-            Q.audio.play("forward-single-2.mp3", 
-                { debounce: 381 })
+            if (mute.sound == false) Q.audio.play("forward-single-2.mp3", { debounce: 381 })
           } else {
               carmoving = false;
             Q.audio.stop("forward-single-2.mp3")    
+          }
+          
+          // down is toggle mute
+          if(Q.inputs["down"]) {
+              mute.sound = !mute.sound;
+              if (mute.sound == true) {
+                  Q.audio.stop();
+              } else {
+                  Q.audio.play("bg-music.mp3", { loop: true })
+              }
+              
           }
 
             // decay velcoity if no thrust            
