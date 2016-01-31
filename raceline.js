@@ -222,17 +222,7 @@ window.addEventListener("load",function() {
        
       });  
          
-      Q.Sprite.extend("Wall", {
-        init: function(p) {
-          this._super(p, {
-            type: Q.SPRITE_GROUND,
-            skipCollide: true,
-            collisionMask: Q.SPRITE_SHIP,
-            sheet: 'spritesheet_wall',
-          });
-          this.add("2d");
-        }
-      });
+      
       // Return a x and y location from a row and column
       // in our tile map
       Q.tilePos = function(col,row, tile) {
@@ -251,13 +241,9 @@ window.addEventListener("load",function() {
       Q.TileLayer.extend("TrackOneWall",{
         init: function() {
           this._super({
-            type: Q.SPRITE_GROUND,
+            type: Q.SPRITE_WALL,
             dataAsset: 'trackwall.json',
             sheet:     'spritesheet_wall',
-            tileW: 32,
-            tileH: 32,
-            blockTileW: 32,
-            blockTileH: 32,
           });
         },
         setup: function() {
@@ -280,8 +266,9 @@ window.addEventListener("load",function() {
       
 
       Q.scene("level1",function(stage) {
-        //var map = stage.insert(new Q.TrackOne());
+
         var wall = stage.collisionLayer(new Q.TrackOneWall());
+                //var map = stage.insert(new Q.TrackOne());
         //wall.setup();
         line = stage.insert(new Q.Line({point:{x:17 * Q.TILESIZE, y:17 * Q.TILESIZE}}));
         player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
