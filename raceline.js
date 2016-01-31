@@ -82,7 +82,7 @@ window.addEventListener("load",function() {
         }
       });
       Q.Sprite.extend("LineSprite", {
-          draw: function(ctx) {
+        draw: function(ctx) {
           var p = this.p;
           ctx.strokeStyle = '#ff0000';
           this.p.type = Q.SPRITE_LINE;
@@ -94,7 +94,7 @@ window.addEventListener("load",function() {
           ctx.lineWidth = 10;
           ctx.stroke();
         }
-      })
+      });
       Q.UI.Text.extend("Score",{ 
         init: function(p) {
             this._super({
@@ -119,7 +119,7 @@ window.addEventListener("load",function() {
       Q.Sprite.extend("Ship", {
         init: function(p) {
           this._super(p, {
-            type: Q.SPRITE_NONE,
+            type: Q.SPRITE_SHIP,
             collisionMask: Q.SPRITE_WALL | Q.SPRITE_LINE,
             w: 25,
             h: 25,
@@ -132,7 +132,8 @@ window.addEventListener("load",function() {
             //points: [ [0, -10 ], [ 5, 10 ], [ -5,10 ]],
             bulletSpeed: 500,
             activated: false,
-            asset: "CarPos1.png"
+            asset: "CarPos1.png",
+            sensor: true
           });
           this.add("2d, reposition, aiBounce");
           this.on("hit",this,"collision");       // register a collision event callback
@@ -140,8 +141,8 @@ window.addEventListener("load",function() {
           Q.input.on("fire",this,"fire");
 
           this.activationObject = new Q.Sprite({ x: Q.width/2, y: Q.height/2, w: 100, h: 100 });
+          //this.on("sensor");
         },
-        
         // collision: play a pop sound effect ^.^
         collision: function(col) {
             Q.audio.play("pops.mp3", { debounce: 50 })
@@ -150,14 +151,40 @@ window.addEventListener("load",function() {
         checkActivation: function() {
           if(!this.stage.search(this.activationObject, Q.SPRITE_WALL)) {
             this.p.activated = true;
+            
           }
 
         },
+        checkLine: function() {
+            
+            var bb = {
+                ix: player.p.x,
+                iy: player.p.y,
+                ax: player.p.x + player.p.w,
+                ay: player.p.y + player.p.h
+                }            
+            line.p.points.forEach(function(p){
 
+                if( bb.ix <= p[0] && p[0] <= bb.ax && bb.iy <= p[1] && p[1] <= bb.ay ) {
+                    Q.state.inc("score", 1);
+                    return;
+
+                }
+                
+                
+            });
+            //no collide
+            Q.state.dec("score", 1);
+            if(Q.state.get("score") < 0)
+            Q.state.set("score", 0) ;
+
+        },
         step: function(dt) {
           if(!this.p.activated) {
             return this.checkActivation();
           }
+          this.checkLine();
+          
           var p = this.p;
           p.angle += p.omega * dt;
         //   p.omega *=  1 - 1 * dt;    // old: decay omega if not turning
@@ -228,21 +255,17 @@ window.addEventListener("load",function() {
         init: function(p) {
           p = this.createShape(p);
           
-          this._super(p);
+          this._super(p,{
+              type: Q.SPRITE_LINE,
+          });
 
-          this.on("sensor");
-        },
-        sensor: function(){  
-            player.p.acceleration = 30;
-            Q.state.inc("score", 1);
-            console.log('trigger');
         },
 
         createShape: function(p) {
           p = p || {};
 
           p.points = [];
-          p.points.push([p.x , p.y + 20])
+          p.points.push([p.x , p.y + 40])
           p.sensor = true;
           p.type = Q.SPRITE_LINE;
           p.cx = 0;
@@ -255,11 +278,19 @@ window.addEventListener("load",function() {
           p.angle = 0;
          return p;
        },
+       checkLine: function() {
+         if(this.stage.search(this, Q.SPRITE_SHIP)) {
+            player.p.acceleration = 30;
+            Q.state.inc("score", 1);
+            console.log('trigger');
+          }
+       },
        step: function(){
+           this.checkLine();
           var p = this.p;
             var thrustX = Math.sin(player.p.angle * Math.PI / 180),
                 thrustY = -Math.cos(player.p.angle * Math.PI / 180);
-          p.points.push([player.p.x - thrustX * 20 , player.p.y - thrustY * 20]);
+          p.points.push([player.p.x - thrustX * 40 , player.p.y - thrustY * 40]);
           if(p.points.length > 2000)
             p.points.shift();
        },
