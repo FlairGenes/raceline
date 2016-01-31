@@ -291,8 +291,12 @@ window.addEventListener("load",function() {
             sheet:     'spritesheet_track'
         }));
         //wall.setup();
-        line = stage.insert(new Q.Line(Q.tilePos(17,17,0)));
-        player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
+        
+        // Insert player and line into stage using tile co-ordinates
+        // line = stage.insert(new Q.Line(Q.tilePos(17,17,0)));
+        // player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
+        line = stage.insert(new Q.Line(Q.tilePos(20,16,0)));
+        player = stage.insert(new Q.Ship(Q.tilePos(20,16,0)));
         
         var viewport = stage.add("viewport").follow(player);
         stage.viewport.scale;
