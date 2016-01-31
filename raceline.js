@@ -13,8 +13,18 @@ window.addEventListener("load",function() {
       Q.ctx.mozImageSmoothingEnabled = false;
       Q.ctx.webkitImageSmoothingEnabled = false;      
 
+      // Control setup
       Q.input.keyboardControls();
       Q.input.joypadControls();
+      Q.input.touchControls({
+          controls: [
+              ['up', '⬆️'],
+              [],
+              [],
+              ['left', '⬅️'],
+              ['right', '➡️']
+          ]
+      });
 
       Q.gravityX = 0;
       Q.gravityY = 0;
