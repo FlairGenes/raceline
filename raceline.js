@@ -203,10 +203,7 @@ window.addEventListener("load",function() {
           p = p || {};
 
           p.points = [];
-          p.points.push([p.point.x - 1, p.point.y - 1 ]);
-          p.points.push([p.point.x + 1, p.point.y - 1 ]);
-          p.points.push([p.point.x + 1, p.point.y + 1 ]);
-          p.points.push([p.point.x - 1, p.point.y + 1 ]);
+          
           
           p.cx = 0;
           p.cy = 0;   
@@ -222,7 +219,7 @@ window.addEventListener("load",function() {
           var p = this.p;
 
           p.points.push([player.p.x, player.p.y]);
-          if(p.points.length > 5000)
+          if(p.points.length > 2000)
             p.points.shift();
        },
        
@@ -275,8 +272,8 @@ window.addEventListener("load",function() {
         var wall = stage.collisionLayer(new Q.TrackOneWall());
         var map = stage.insert(new Q.TrackOne());
         //wall.setup();
-        line = stage.insert(new Q.Line({point:{x:17 * Q.TILESIZE, y:17 * Q.TILESIZE}}));
-        player = stage.insert(new Q.Ship({ x:24* Q.TILESIZE, y:17 * Q.TILESIZE}));
+        line = stage.insert(new Q.Line());
+        player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
         
         stage.add("viewport").follow(player);
         stage.viewport.scale;
