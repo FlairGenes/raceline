@@ -270,6 +270,7 @@ window.addEventListener("load",function() {
         player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
         
         stage.add("viewport").follow(player);
+        stage.viewport.scale;
         
         stage.on("step",function() {
 
