@@ -134,8 +134,14 @@ window.addEventListener("load",function() {
           // New turning code: turn buttons 'set' rotation
           if(Q.inputs["right"]) { 
             p.omega = p.omegaDelta;
+            Q.audio.play("turn-2.mp3", 
+                { debounce: 1336 })
           } else if(Q.inputs["left"]) {
             p.omega = -p.omegaDelta;
+            Q.audio.play("turn-2.mp3", 
+                { debounce: 1336 })
+          } else {
+            Q.audio.stop("turn-2.mp3")
           }
 
           // Wrap angle to 0–360 degrees
@@ -303,11 +309,18 @@ window.addEventListener("load",function() {
       
 
 // Make sure penguin.png is loaded
-Q.load("CarPos1.png, track.json, trackwall.json, spritesheet_track.png, spritesheet_wall.png, forward-single-2.mp3",function() {
-    Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
-    Q.sheet("spritesheet_track","spritesheet_track.png", { tileW: 32, tileH: 32 });
-    Q.stageScene("level1");
-   
- });
+Q.load(
+    ["CarPos1.png",
+    "track.json",
+    "trackwall.json",
+    "spritesheet_track.png",
+    "spritesheet_wall.png",
+    "forward-single-2.mp3",
+    "turn-2.mp3"],
+    function() {
+        Q.sheet("spritesheet_wall","spritesheet_wall.png", { tileW: 32, tileH: 32 });
+        Q.sheet("spritesheet_track","spritesheet_track.png", { tileW: 32, tileH: 32 });
+        Q.stageScene("level1");   
+});
 
-    });
+});
