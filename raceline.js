@@ -188,7 +188,7 @@ window.addEventListener("load",function() {
             skipCollide: true,
             points: []
           });
-          this.add("1d");
+          this.add("2d");
 
           //this.on("hit.sprite",this,"collision");
         },
@@ -225,46 +225,23 @@ window.addEventListener("load",function() {
       Q.tilePos = function(col,row, tile) {
         return { x: col*32, y: row*32, frame: tile };
       }
-      Q.TileLayer.extend("TrackOne",{
-        init: function() {
-          this._super({
-            dataAsset: 'track.json',
-            sheet:     'spritesheet_track',
-          });
 
-        }
-      });
-      Q.TileLayer.extend("TrackOneWall",{
-        init: function() {
-          this._super({
-            type: Q.SPRITE_WALL,
-            dataAsset: 'trackwall.json',
-            sheet:     'spritesheet_wall',
-          });
-        },
-        setup: function() {
-          // Clone the top level arriw
-          var tiles = this.p.tiles = this.p.tiles.concat();
-          var size = this.p.tileW;
-          for(var y=0;y<tiles.length;y++) {
-            var row = tiles[y] = tiles[y].concat();
-            for(var x =0;x<row.length;x++) {
-              var tile = row[x];
-
-              if(tile == 0 ) {
-                row[x] = 0;
-              }
-            }
-          }
-        }
-        
+      Q.TileLayer.extend("TrackWall",{
+        //add collision code here
       });
       
 
       Q.scene("level1",function(stage) {
 
-        var wall = stage.collisionLayer(new Q.TrackOneWall());
-        var map = stage.insert(new Q.TrackOne());
+        var wall = stage.collisionLayer(new Q.TrackWall({
+            type: Q.SPRITE_WALL,
+            dataAsset: 'trackwall.json',
+            sheet:     'spritesheet_wall',
+        }));
+        var map = stage.insert(new Q.TileLayer({
+            dataAsset: 'track.json',
+            sheet:     'spritesheet_track'
+        }));
         //wall.setup();
         line = stage.insert(new Q.Line());
         player = stage.insert(new Q.Ship(Q.tilePos(17,17,0)));
