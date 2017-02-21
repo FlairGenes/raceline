@@ -13,4 +13,4 @@ We have a live version up at flairgenes.github.io/raceline. Go play in your brow
 If you've downloaded the game from GGJ, you'll need to run a web server locally to play. We suggest Python3 (install it and run python -m http.server from your terminal in the Raceline folder) or Node.js and the http-server package (install Node, run npm install http-server -g from your terminal and then run http-server within the Raceline folder). Then navigate to localhost:xxxx, substituting the port specified by your web server for xxxx.
 
 # Credits
-Created by Tom Butler, Mitchell Smith and [James Goldie](rensa.co).
+Created by Tom Butler, [Mitchell Smith](mitchellsmith.net) and [James Goldie](rensa.co).
